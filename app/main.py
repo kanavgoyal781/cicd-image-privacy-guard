@@ -5,6 +5,7 @@ from PIL import Image, UnidentifiedImageError
 app = FastAPI(title="Privacy Guard")
 ALLOWED = {"image/jpeg","image/png"}
 MAX_BYTES = 5*1024*1024
+APP_VERSION = os.getenv("APP_VERSION", "dev")
 @app.get("/health")
 def health(): return {"status":"ok","version":APP_VERSION}
 @app.post("/sanitize")

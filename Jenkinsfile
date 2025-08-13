@@ -9,16 +9,18 @@ pipeline {
     stage('Checkout') {
       steps { checkout scm }
     }
-    stage('Tests') {
-      steps {
-        sh '''
-          docker run --rm -v "$PWD":/src -w /src python:3.11-slim bash -lc '
-            pip install --no-cache-dir -r requirements.txt pytest pillow python-multipart &&
-            pytest -q
-          '
-        '''
-      }
-    }
+stage('Tests') {
+  steps {
+    sh '''
+      docker run --rm -v ${WORKSPACE}:/src -w /src \
+        -e PYTHONPATH=/src \
+        python:3.11-slim bash -lc "
+          pip install --no-cache-dir -r requirements.txt pytest pillow python-multipart &&
+          python -m pytest -q
+        "
+    '''
+  }
+}
     stage('Build') {
       steps { sh 'docker build -t $IMAGE:$VERSION -t $IMAGE:latest .' }
     }
